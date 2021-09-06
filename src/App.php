@@ -24,6 +24,12 @@ class App
     private $DB;
 
     /**
+     * Required fields for validation
+     * @var string[]
+     */
+    protected $required = ['temperature','humidity','pressure', 'altitude'];
+
+    /**
      * App constructor.
      * @param $configs
      */
@@ -32,9 +38,8 @@ class App
         $this->configs = $configs;
         $this->DB = new DB();
 
-        $this->add([
-            'token' => 'sdfZX5)@34Zxf',
-        ]);
+        // Read request
+        $this->add($_REQUEST);
     }
 
     /**
@@ -44,22 +49,30 @@ class App
      */
     private function validate($arData) {
         if(!$arData){
-            echo 'Error: Empty data!';
+            echo 'Error: Empty data!<br>';
             return false;
         }
 
         if(!$arData['token']) {
-            echo 'Error: Empty token!';
+            echo 'Error: Empty token!<br>';
             return false;
         }
 
         if(!in_array($arData['token'], array_values($this->configs['tokens']))) {
-            echo 'Error: Wrong token!';
+            echo 'Error: Wrong token!<br>';
             return false;
         }
 
-        if(count(array_intersect_key($arData, ['temperature','humidity','pressure', 'altitude'])) != 4) {
-            echo 'Error: Lost value(s)!';
+        // Check required fields
+        $hasErrors = false;
+        foreach ($this->required as $field) {
+            if(!in_array($field, array_keys($arData))) {
+                $hasErrors = true;
+                echo 'Error: Required field: "'.$field.'"<br>';
+            }
+        }
+
+        if(!$hasErrors) {
             return false;
         }
 

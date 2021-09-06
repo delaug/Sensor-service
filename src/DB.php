@@ -19,14 +19,24 @@ class DB
      * Path to DB file
      * @var string
      */
-    private $path = __DIR__.'/../db/store.db';
+    private $dbpath = __DIR__ . '/../db/';
+
+    /**
+     * DB name
+     * @var string
+     */
+    private $dbname = 'store.db';
 
     /**
      * DB constructor.
      */
     public function __construct()
     {
-        $this->db = new SQLite3($this->path);
+        // Check dir exist
+        if(!is_dir($this->dbpath))
+            mkdir($this->dbpath);
+
+        $this->db = new SQLite3($this->dbpath . $this->dbname);
         $this->db->exec("CREATE TABLE IF NOT EXISTS sensors (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at DATETIME, temperature REAL, humidity REAL, pressure REAL, altitude REAL)");
     }
 
