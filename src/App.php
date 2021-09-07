@@ -38,7 +38,8 @@ class App
         $this->DB = new DB();
 
         // Read request
-        $this->add($_GET);
+        if(isset($_GET) && !empty($_GET))
+            $this->add($_GET);
     }
 
     /**
@@ -63,15 +64,16 @@ class App
         }
 
         // Check required fields
-        $hasErrors = false;
+        $errors = [];
         foreach ($this->required as $field) {
             if(!in_array($field, array_keys($arData))) {
-                $hasErrors = true;
-                echo 'Error: Required field: "'.$field.'"<br>';
+                $errors[] = 'Error: Required field: "'.$field.'"<br>';
             }
         }
 
-        if(!$hasErrors) {
+        if($errors) {
+            foreach ($errors as $error)
+                echo $error;
             return false;
         }
 
