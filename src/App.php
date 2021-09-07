@@ -3,7 +3,6 @@
 namespace src;
 
 use src\DB as DB;
-use function Couchbase\defaultDecoder;
 
 require_once 'DB.php';
 
@@ -39,7 +38,7 @@ class App
         $this->DB = new DB();
 
         // Read request
-        $this->add($_REQUEST);
+        $this->add($_GET);
     }
 
     /**

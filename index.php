@@ -9,5 +9,4 @@
 	use src\App as App;
 
 	$app = new App($configs);
-
 ?>
