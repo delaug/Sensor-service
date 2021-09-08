@@ -47,7 +47,7 @@ class DB
      */
     public function add($arValues)
     {
-        $stmt = $this->db->prepare("INSERT INTO sensors (created_at, temperature, humidity, pressure, altitude) VALUES(CURRENT_TIMESTAMP, :temperature, :humidity, :pressure, :altitude)");
+        $stmt = $this->db->prepare("INSERT INTO sensors (created_at, temperature, humidity, pressure, altitude) VALUES(datetime(CURRENT_TIMESTAMP, 'localtime'), :temperature, :humidity, :pressure, :altitude)");
         $stmt->bindValue(':temperature', $arValues['temperature'], SQLITE3_FLOAT);
         $stmt->bindValue(':humidity', $arValues['humidity'], SQLITE3_FLOAT);
         $stmt->bindValue(':pressure', $arValues['pressure'], SQLITE3_FLOAT);
