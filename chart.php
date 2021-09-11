@@ -35,20 +35,23 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chart</title>
-
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
 </head>
 <body>
-    <div >
-        <canvas id="chartTH" style="height:40vh; width:100%"></canvas>
-        <canvas id="chartP" style="height:40vh; width:100%"></canvas>
+    <div>
+        <canvas id="chartT" style="height:32vh; width:100%"></canvas>
+        <canvas id="chartH" style="height:32vh; width:100%"></canvas>
+        <canvas id="chartP" style="height:32vh; width:100%"></canvas>
     </div>
     <script>
-        const configTH = {
+        const config = {
             type: 'line',
+            options: {
+                responsive: false,
+            }
+        };
+
+        const configT = Object.assign({}, config, {
             data: {
                 labels: <?=json_encode($arLabels)?>,
                 datasets: [
@@ -59,7 +62,14 @@
                         borderWidth: 1,
                         radius: 0,
                         data: <?=json_encode($arTemperature)?>,
-                    },
+                    }
+                ]
+            }
+        });
+        const configH = Object.assign({}, config, {
+            data: {
+                labels: <?=json_encode($arLabels)?>,
+                datasets: [
                     {
                         label: 'Humidity',
                         backgroundColor: 'rgb(99,102,255)',
@@ -69,19 +79,10 @@
                         data: <?=json_encode($arHumidity)?>,
                     }
                 ]
-            },
-            options: {
-                responsive: false,
             }
-        };
+        });
 
-        var chartTH = new Chart(
-            document.getElementById('chartTH'),
-            configTH
-        );
-
-        const configP = {
-            type: 'line',
+        const configP = Object.assign({}, config, {
             data: {
                 labels: <?=json_encode($arLabels)?>,
                 datasets: [
@@ -94,11 +95,18 @@
                         data: <?=json_encode($arPressure)?>,
                     }
                 ]
-            },
-            options: {
-                responsive: false,
             }
-        };
+        });
+
+        var chartT = new Chart(
+            document.getElementById('chartT'),
+            configT
+        );
+
+        var chartH = new Chart(
+            document.getElementById('chartH'),
+            configH
+        );
 
         var chartP = new Chart(
             document.getElementById('chartP'),
