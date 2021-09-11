@@ -25,6 +25,11 @@
     $arPressure = array_map(function ($val) {
         return $val / 1.333;
     }, $arPressure);
+
+    // Current values
+    $currentTemperature = current($arTemperature);
+    $currentHumidity = current($arHumidity);
+    $currentPressure = number_format(current($arPressure), 2);
 ?>
 
 <!doctype html>
@@ -34,7 +39,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Chart</title>
+    <title><?= $currentTemperature.' °C '.$currentHumidity.' % '.$currentPressure.' mmHg'?></title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -48,10 +53,16 @@
             type: 'line',
             options: {
                 responsive: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Title'
+                    },
+                },
             }
         };
 
-        const configT = Object.assign({}, config, {
+        var configT = Object.assign({}, config, {
             data: {
                 labels: <?=json_encode($arLabels)?>,
                 datasets: [
@@ -66,7 +77,7 @@
                 ]
             }
         });
-        const configH = Object.assign({}, config, {
+        var configH = Object.assign({}, config, {
             data: {
                 labels: <?=json_encode($arLabels)?>,
                 datasets: [
@@ -82,7 +93,7 @@
             }
         });
 
-        const configP = Object.assign({}, config, {
+        var configP = Object.assign({}, config, {
             data: {
                 labels: <?=json_encode($arLabels)?>,
                 datasets: [
@@ -98,16 +109,19 @@
             }
         });
 
+        configT.options.plugins.title.text = <?=$currentTemperature?>+' °C';
         var chartT = new Chart(
             document.getElementById('chartT'),
             configT
         );
 
+        configT.options.plugins.title.text = <?=$currentHumidity?>+' %';
         var chartH = new Chart(
             document.getElementById('chartH'),
             configH
         );
 
+        configT.options.plugins.title.text = <?=$currentPressure?>+' mmHg';
         var chartP = new Chart(
             document.getElementById('chartP'),
             configP
