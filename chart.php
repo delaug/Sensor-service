@@ -15,6 +15,8 @@
     $arTemperature = array_column($arData, 'temperature');
     $arHumidity = array_column($arData, 'humidity');
     $arPressure = array_column($arData, 'pressure');
+    $arBatteryVoltage = array_column($arData, 'battery_voltage');
+    $arBatteryPercent = array_column($arData, 'battery_percent');
 
     // Formatting
     $arLabels = array_map(function ($val) {
@@ -30,6 +32,25 @@
     $currentTemperature = current($arTemperature);
     $currentHumidity = current($arHumidity);
     $currentPressure = number_format(current($arPressure), 2);
+    $currentBatteryVoltage = current($arBatteryVoltage);
+    $currentBatteryPercent = current($arBatteryPercent);
+
+    function getAllCurrent($type = null) {
+        global $currentTemperature, $currentHumidity, $currentPressure, $currentBatteryVoltage,$currentBatteryPercent;
+
+        if(!$type)
+            return $currentTemperature.' °C '.$currentHumidity.' % '.$currentPressure.' mmHg '.$currentBatteryVoltage.' V '.$currentBatteryPercent.' %';
+        elseif($type == 'html')
+            return "
+                <ul class='current'>
+                    <li>$currentTemperature <span>°C</span></li>
+                    <li>$currentHumidity <span>%</span></li>
+                    <li>$currentPressure <span>mmHg</span></li>
+                    <li>$currentBatteryVoltage <span>V</span></li>
+                    <li>$currentBatteryPercent <span>%</span></li>
+                </ul>
+            ";
+    }
 ?>
 
 <!doctype html>
@@ -39,14 +60,25 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?= $currentTemperature.' °C '.$currentHumidity.' % '.$currentPressure.' mmHg'?></title>
+    <title><?=getAllCurrent()?></title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .current { list-style: none; }
+        .current li span {
+            color: gray;
+            font-size: 12px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
+    <?=getAllCurrent('html')?>
     <div>
         <canvas id="chartT" style="height:32vh; width:100%"></canvas>
         <canvas id="chartH" style="height:32vh; width:100%"></canvas>
         <canvas id="chartP" style="height:32vh; width:100%"></canvas>
+        <canvas id="chartBV" style="height:32vh; width:100%"></canvas>
+        <canvas id="chartBP" style="height:32vh; width:100%"></canvas>
     </div>
     <script>
         const config = {
@@ -109,6 +141,38 @@
             }
         });
 
+        var configBV = Object.assign({}, config, {
+            data: {
+                labels: <?=json_encode($arLabels)?>,
+                datasets: [
+                    {
+                        label: 'Battery V',
+                        backgroundColor: 'rgb(21,82,147)',
+                        borderColor: 'rgb(21,82,147)',
+                        borderWidth: 1,
+                        radius: 0,
+                        data: <?=json_encode($arBatteryVoltage)?>,
+                    }
+                ]
+            }
+        });
+
+        var configBP = Object.assign({}, config, {
+            data: {
+                labels: <?=json_encode($arLabels)?>,
+                datasets: [
+                    {
+                        label: 'Battery %',
+                        backgroundColor: 'rgb(255,49,49)',
+                        borderColor: 'rgb(255,49,49)',
+                        borderWidth: 1,
+                        radius: 0,
+                        data: <?=json_encode($arBatteryPercent)?>,
+                    }
+                ]
+            }
+        });
+
         configT.options.plugins.title.text = <?=$currentTemperature?>+' °C';
         var chartT = new Chart(
             document.getElementById('chartT'),
@@ -125,6 +189,18 @@
         var chartP = new Chart(
             document.getElementById('chartP'),
             configP
+        );
+
+        configBV.options.plugins.title.text = <?=$currentBatteryVoltage?>+' V';
+        var chartBV = new Chart(
+            document.getElementById('chartBV'),
+            configBV
+        );
+
+        configBP.options.plugins.title.text = <?=$currentBatteryPercent?>+' %';
+        var configBP = new Chart(
+            document.getElementById('chartBP'),
+            configBP
         );
     </script>
 </body>

@@ -26,7 +26,7 @@ class App
      * Required fields for validation
      * @var string[]
      */
-    protected $required = ['temperature','humidity','pressure', 'altitude'];
+    protected $required = ['temperature','humidity','pressure', 'altitude', 'bat_voltage', 'bat_percent'];
 
     /**
      * App constructor.
